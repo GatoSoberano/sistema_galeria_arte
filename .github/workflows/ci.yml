@@ -14,18 +14,20 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up Flutter
+      - name: Version de flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.0' # o la versión que usas
-          
+          flutter-version: '3.22.0' # correccion de version de flutter          
 
-      - name: Install dependencies
+      - name: Instalar dependencias
         run: flutter pub get
 
-      - name: Run analyzer
+      - name: correr amalizador
         run: flutter analyze
 
-      - name: Run tests
+      - name: Correr prubas
         run: flutter test
+      - name: Análisis de código
+        run: flutter analyze --no-fatal-infos
+
 
