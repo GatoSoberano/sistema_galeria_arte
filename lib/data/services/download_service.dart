@@ -8,59 +8,54 @@ import 'package:open_file/open_file.dart';
 class DownloadService {
   Future<bool> downloadImage(String assetPath, BuildContext context) async {
     try {
-      // Para Android 13+, usar el directorio temporal para evitar problemas de permisos
+      bool permissionGranted = true;
+
       if (Platform.isAndroid) {
         final androidInfo = await DeviceInfoPlugin().androidInfo;
-        if (androidInfo.version.sdkInt >= 33) {
-          // No se requiere permiso explícito para getTemporaryDirectory
-          debugPrint('Usando directorio temporal en Android 13+ (API ${androidInfo.version.sdkInt})');
-        } else {
-          // Para versiones anteriores, solicitar permiso de almacenamiento (opcional, pero mantendremos la lógica)
+        if (androidInfo.version.sdkInt < 33) {
           final storageStatus = await Permission.storage.request();
-          if (!storageStatus.isGranted) {
-            debugPrint('Permiso de almacenamiento denegado: $storageStatus');
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: const Text('Permiso de almacenamiento denegado. Por favor, otorga el permiso en ajustes.'),
-                  action: SnackBarAction(
-                    label: 'Abrir ajustes',
-                    onPressed: () => openAppSettings(),
-                  ),
-                ),
-              );
-            }
-            return false;
-          }
-          debugPrint('Permiso otorgado: $storageStatus');
+          permissionGranted = storageStatus.isGranted;
         }
       }
 
-      // Cargar la imagen desde los activos
+      if (!permissionGranted) {
+        // Mover esta lógica fuera del async gap
+        _showPermissionDeniedSnackbar(context);
+        return false;
+      }
+
       final byteData = await DefaultAssetBundle.of(context).load(assetPath);
       final bytes = byteData.buffer.asUint8List();
-      debugPrint('Imagen cargada desde: $assetPath, Tamaño: ${bytes.length} bytes');
 
-      // Usar el directorio temporal de la app
       final directory = await getTemporaryDirectory();
-      debugPrint('Directorio de guardado: ${directory.path}');
-
-      // Crear un archivo con un nombre único
       final fileName = assetPath.split('/').last;
       final filePath = '${directory.path}/$fileName';
       final file = File(filePath);
 
-      // Escribir los bytes en el archivo
       await file.writeAsBytes(bytes);
-      debugPrint('Imagen guardada en: $filePath');
+      await OpenFile.open(filePath);
 
-      // Abrir el archivo después de descargarlo
-      final result = await OpenFile.open(filePath);
-      debugPrint('Resultado de abrir el archivo: $result');
       return true;
     } catch (e) {
       debugPrint('Error al descargar la imagen: $e');
       return false;
     }
+  }
+
+  void _showPermissionDeniedSnackbar(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final scaffoldMessenger = ScaffoldMessenger.maybeOf(context);
+      if (scaffoldMessenger != null) {
+        scaffoldMessenger.showSnackBar(
+          SnackBar(
+            content: const Text('Permiso de almacenamiento denegado.'),
+            action: SnackBarAction(
+              label: 'Abrir ajustes',
+              onPressed: () => openAppSettings(),
+            ),
+          ),
+        );
+      }
+    });
   }
 }
