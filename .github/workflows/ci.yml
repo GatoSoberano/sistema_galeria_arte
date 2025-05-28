@@ -28,6 +28,6 @@ jobs:
       - name: Correr prubas
         run: flutter test
       - name: Análisis de código
-        run: flutter analyze --no-fatal-infos
+        run: flutter analyze --no-fatal-infos # medida inmediata a error prints
 
 
