@@ -11,10 +11,10 @@ class AddArtScreen extends ConsumerStatefulWidget {
   const AddArtScreen({super.key});
 
   @override
-  _AddArtScreenState createState() => _AddArtScreenState();
+  AddArtScreenState createState() => AddArtScreenState();
 }
 
-class _AddArtScreenState extends ConsumerState<AddArtScreen> {
+class AddArtScreenState extends ConsumerState<AddArtScreen> {
   final _formKey = GlobalKey<FormState>();
   String? _title, _description, _imagePath;
   double? _price;
@@ -29,9 +29,11 @@ class _AddArtScreenState extends ConsumerState<AddArtScreen> {
 
   Future<void> _initializeCamera() async {
     final cameras = await availableCameras();
+    if (!mounted) return; // 👈 Verificación segura
     if (cameras.isNotEmpty) {
       _controller = CameraController(cameras[0], ResolutionPreset.high);
       await _controller!.initialize();
+      if (!mounted) return; // 👈 Verificación después del await
       setState(() => _isCameraInitialized = true);
     }
   }
@@ -43,9 +45,13 @@ class _AddArtScreenState extends ConsumerState<AddArtScreen> {
   }
 
   Future<void> _captureImage() async {
+    if (_controller == null || !_controller!.value.isInitialized) return;
     final cameraService = CameraService();
-    _imagePath = await cameraService.captureAndSaveImage(_controller!);
-    setState(() {});
+    final imagePath = await cameraService.captureAndSaveImage(_controller!);
+    if (!mounted) return;
+    setState(() {
+      _imagePath = imagePath;
+    });
   }
 
   void _saveArtPiece() {
@@ -58,8 +64,10 @@ class _AddArtScreenState extends ConsumerState<AddArtScreen> {
         price: _price!,
         imagePath: _imagePath!,
       );
+
       ref.read(addArtUseCaseProvider).execute(artPiece).then((_) {
         ref.invalidate(artPiecesProvider);
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Art piece added!')),
         );
