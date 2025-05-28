@@ -13,12 +13,12 @@ class DownloadService {
         final androidInfo = await DeviceInfoPlugin().androidInfo;
         if (androidInfo.version.sdkInt >= 33) {
           // No se requiere permiso explícito para getTemporaryDirectory
-          print('Usando directorio temporal en Android 13+ (API ${androidInfo.version.sdkInt})');
+          debugPrint('Usando directorio temporal en Android 13+ (API ${androidInfo.version.sdkInt})');
         } else {
           // Para versiones anteriores, solicitar permiso de almacenamiento (opcional, pero mantendremos la lógica)
           final storageStatus = await Permission.storage.request();
           if (!storageStatus.isGranted) {
-            print('Permiso de almacenamiento denegado: $storageStatus');
+            debugPrint('Permiso de almacenamiento denegado: $storageStatus');
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -32,18 +32,18 @@ class DownloadService {
             }
             return false;
           }
-          print('Permiso otorgado: $storageStatus');
+          debugPrint('Permiso otorgado: $storageStatus');
         }
       }
 
       // Cargar la imagen desde los activos
       final byteData = await DefaultAssetBundle.of(context).load(assetPath);
       final bytes = byteData.buffer.asUint8List();
-      print('Imagen cargada desde: $assetPath, Tamaño: ${bytes.length} bytes');
+      debugPrint('Imagen cargada desde: $assetPath, Tamaño: ${bytes.length} bytes');
 
       // Usar el directorio temporal de la app
       final directory = await getTemporaryDirectory();
-      print('Directorio de guardado: ${directory.path}');
+      debugPrint('Directorio de guardado: ${directory.path}');
 
       // Crear un archivo con un nombre único
       final fileName = assetPath.split('/').last;
@@ -52,14 +52,14 @@ class DownloadService {
 
       // Escribir los bytes en el archivo
       await file.writeAsBytes(bytes);
-      print('Imagen guardada en: $filePath');
+      debugPrint('Imagen guardada en: $filePath');
 
       // Abrir el archivo después de descargarlo
       final result = await OpenFile.open(filePath);
-      print('Resultado de abrir el archivo: $result');
+      debugPrint('Resultado de abrir el archivo: $result');
       return true;
     } catch (e) {
-      print('Error al descargar la imagen: $e');
+      debugPrint('Error al descargar la imagen: $e');
       return false;
     }
   }
