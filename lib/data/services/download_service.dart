@@ -10,6 +10,12 @@ class DownloadService {
     try {
       bool permissionGranted = true;
 
+      // Precapturar el messenger para usar luego sin error
+      final scaffoldMessenger = ScaffoldMessenger.maybeOf(context);
+
+      // Precapturar el assetBundle antes del async gap
+      final assetBundle = DefaultAssetBundle.of(context);
+
       if (Platform.isAndroid) {
         final androidInfo = await DeviceInfoPlugin().androidInfo;
         if (androidInfo.version.sdkInt < 33) {
@@ -19,12 +25,13 @@ class DownloadService {
       }
 
       if (!permissionGranted) {
-        // Mover esta lógica fuera del async gap
-        _showPermissionDeniedSnackbar(context);
+        if (scaffoldMessenger != null) {
+          _showPermissionDeniedSnackbar(scaffoldMessenger);
+        }
         return false;
       }
 
-      final byteData = await DefaultAssetBundle.of(context).load(assetPath);
+      final byteData = await assetBundle.load(assetPath);
       final bytes = byteData.buffer.asUint8List();
 
       final directory = await getTemporaryDirectory();
@@ -42,20 +49,17 @@ class DownloadService {
     }
   }
 
-  void _showPermissionDeniedSnackbar(BuildContext context) {
+  void _showPermissionDeniedSnackbar(ScaffoldMessengerState scaffoldMessenger) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final scaffoldMessenger = ScaffoldMessenger.maybeOf(context);
-      if (scaffoldMessenger != null) {
-        scaffoldMessenger.showSnackBar(
-          SnackBar(
-            content: const Text('Permiso de almacenamiento denegado.'),
-            action: SnackBarAction(
-              label: 'Abrir ajustes',
-              onPressed: () => openAppSettings(),
-            ),
+      scaffoldMessenger.showSnackBar(
+        SnackBar(
+          content: const Text('Permiso de almacenamiento denegado.'),
+          action: SnackBarAction(
+            label: 'Abrir ajustes',
+            onPressed: () => openAppSettings(),
           ),
-        );
-      }
+        ),
+      );
     });
   }
 }
