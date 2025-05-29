@@ -1,0 +1,33 @@
+stages:
+  - build
+  - test
+  - release
+
+variables:
+  LC_ALL: "C.UTF-8"
+  LANG: "C.UTF-8"
+
+flutter_setup: &flutter_setup
+  image: cirrusci/flutter:latest
+  before_script:
+    - flutter pub get
+
+build_apk:
+  stage: build
+  <<: *flutter_setup
+  script:
+    - flutter build apk --release
+  artifacts:
+    paths:
+      - build/app/outputs/flutter-apk/app-release.apk
+
+run_tests:
+  stage: test
+  <<: *flutter_setup
+  script:
+    - flutter test
+
+release_manual:
+  stage: release
+  script:
+    - echo "Liberación manual: se puede subir el APK a releases o enviarlo al cliente."
