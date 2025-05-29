@@ -14,15 +14,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup Flutter
+      - name: instalar setup de flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.22.0'
 
-      - name: Install dependencies
+      - name: Instalar dependencias
         run: flutter pub get
 
-      - name: Run Analyzer
+      - name: analizar flutter con FLUTTER ANALYZE
         run: flutter analyze
 
       - name: Run Tests
@@ -31,7 +31,7 @@ jobs:
       - name: Build APK
         run: flutter build apk --release
 
-      - name: Upload APK to GitHub Releases
+      - name: subir APK a GitHub Releases
         uses: ncipollo/release-action@v1
         with:
           artifacts: build/app/outputs/flutter-apk/app-release.apk
