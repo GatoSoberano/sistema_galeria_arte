@@ -1,16 +1,6 @@
 # sistema_galeria_arte
 
-A new Flutter project.
+Esta es una app para gestion de obras de arte. Es posible subir y vender obras propias como tambien la de otros autores reconocidos.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Como usar
+simplemente explora la app y selecciona la obra que mas te guste. oprime download y se cargará automaticamente al carrito. tambien puedes activar la camara para subir tus propias obras o fotografias.
