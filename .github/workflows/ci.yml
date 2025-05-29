@@ -26,7 +26,7 @@ jobs:
         run: flutter test
 
       - name: Build APK
-        run: flutter build apk --release #release de apk automatico
+        run: flutter build apk --release #apk automatico
 
       - name: Upload APK to GitHub Releases
         uses: ncipollo/release-action@v1
