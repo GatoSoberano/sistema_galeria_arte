@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: write  # Permite crear releases y subir artefactos
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,7 +29,7 @@ jobs:
         run: flutter test
 
       - name: Build APK
-        run: flutter build apk --release #apk automatico
+        run: flutter build apk --release
 
       - name: Upload APK to GitHub Releases
         uses: ncipollo/release-action@v1
