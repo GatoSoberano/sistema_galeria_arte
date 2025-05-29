@@ -1,33 +1,37 @@
-name: Flutter CI (PROYECTO FINAL)
+name: Flutter CI/CD - Proyecto Final
 
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
 
 jobs:
   build:
-    name: Build and Test
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      - name: Version de flutter
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.0' # correccion de version de flutter          
+          flutter-version: '3.22.0'
 
-      - name: Instalar dependencias
+      - name: Install dependencies
         run: flutter pub get
 
-      - name: correr amalizador
+      - name: Run Analyzer
         run: flutter analyze
 
-      - name: Correr prubas
+      - name: Run Tests
         run: flutter test
-      - name: Análisis de código
-        run: flutter analyze --no-fatal-infos # medida inmediata a error prints
 
+      - name: Build APK
+        run: flutter build apk --release #release de apk automatico
 
+      - name: Upload APK to GitHub Releases
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: build/app/outputs/flutter-apk/app-release.apk
+          tag: v1.0.${{ github.run_number }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: "Release ${{ github.run_number }}"
