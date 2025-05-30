@@ -30,7 +30,7 @@ void main() async {
       id: 'haring1',
       title: 'Radiant Baby',
       description: 'Keith Haring, 1990. Iconic pop art with bold lines and cultural symbolism.',
-      price: 1200.00,
+      price: 1800.00,
       imagePath: 'assets/images/haring1.jpg',
     ),
   );
