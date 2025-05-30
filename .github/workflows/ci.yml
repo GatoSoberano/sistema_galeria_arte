@@ -2,7 +2,7 @@ name: Flutter CI/CD - Proyecto Final
 
 on:
   push:
-    branches: [main]
+    branches: [dev] # pipeline en rama dev o branch dev
 
 permissions:
   contents: write  # Permite crear releases y subir artefactos
