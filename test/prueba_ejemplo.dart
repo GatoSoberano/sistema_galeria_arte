@@ -6,8 +6,8 @@ void main() {
   });
 
   test('Prueba de ejemplo: verificar concatenación de cadenas', () {
-    const String primero = 'Hola';
-    const String segundo = 'Mundo';
+    const String primero = 'Moisés';
+    const String segundo = 'Navajas';
     expect('$primero $segundo', equals('Hola Mundo'));
   });
 }
