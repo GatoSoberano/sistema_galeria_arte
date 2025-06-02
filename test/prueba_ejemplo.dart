@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('Prueba de ejemplo: verificar suma básica', () {
-    expect(1 + 1, equals(2));
+    expect(4 + 4, equals(8));
   });
 
   test('Prueba de ejemplo: verificar concatenación de cadenas', () {
