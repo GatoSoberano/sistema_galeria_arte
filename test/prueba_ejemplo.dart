@@ -8,7 +8,7 @@ void main() {
   test('Prueba de ejemplo: verificar concatenación de cadenas', () {
     const String primero = 'Moisés';
     const String segundo = 'Navajas';
-    expect('$primero $segundo', equals('Hola Mundo'));
+    expect('$primero $segundo', equals('Moisés Navajas'));
   });
 }
 
